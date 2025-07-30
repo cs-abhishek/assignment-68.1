@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
+import ProductDetails from './ProductDetails';
 
 const App = () => {
   const [sortBy, setSortBy] = useState('default');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentView, setCurrentView] = useState('products'); // 'products' or 'details'
 
   // Product data based on the image
   const products = [
@@ -23,7 +26,7 @@ const App = () => {
       price: 19.00,
       originalPrice: null,
       rating: 0,
-      image: require('./images/img2.jpg'),
+      image: require('./images/img10.jpg'),
       onSale: false
     },
     {
@@ -33,7 +36,7 @@ const App = () => {
       price: 34.00,
       originalPrice: null,
       rating: 0,
-      image: require('./images/img3.jpg'),
+      image: require('./images/img9.jpg'),
       onSale: false
     },
     {
@@ -43,7 +46,7 @@ const App = () => {
       price: 16.00,
       originalPrice: null,
       rating: 0,
-      image: require('./images/img4.jpg'),
+      image: require('./images/img3.jpg'),
       onSale: false
     },
     {
@@ -53,7 +56,7 @@ const App = () => {
       price: 25.00,
       originalPrice: 34.00,
       rating: 0,
-      image: require('./images/img5.jpg'),
+      image: require('./images/img4.jpg'),
       onSale: true
     },
     {
@@ -63,7 +66,7 @@ const App = () => {
       price: 34.00,
       originalPrice: null,
       rating: 0,
-      image: require('./images/img6.jpg'),
+      image: require('./images/img8.jpg'),
       onSale: false
     },
     {
@@ -83,7 +86,7 @@ const App = () => {
       price: 25.00,
       originalPrice: 35.00,
       rating: 0,
-      image: require('./images/img8.jpg'),
+      image: require('./images/img2.jpg'),
       onSale: true
     },
     {
@@ -93,7 +96,7 @@ const App = () => {
       price: 32.00,
       originalPrice: 34.00,
       rating: 0,
-      image: require('./images/img9.jpg'),
+      image: require('./images/img11.jpg'),
       onSale: true
     }
   ];
@@ -106,8 +109,18 @@ const App = () => {
     return stars.join('');
   };
 
+  const handleProductClick = (product) => {
+    setSelectedProduct(product);
+    setCurrentView('details');
+  };
+
+  const handleBackToProducts = () => {
+    setCurrentView('products');
+    setSelectedProduct(null);
+  };
+
   const ProductCard = ({ product }) => (
-    <div className="product-card">
+    <div className="product-card" onClick={() => handleProductClick(product)}>
       {product.onSale && <div className="sale-badge">Sale</div>}
       <img 
         src={product.image} 
@@ -142,38 +155,47 @@ const App = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="main-content">
-        <div className="container">
-          {/* Sorting */}
-          <div className="sorting">
-            <select 
-              value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="default">Default sorting</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Rating</option>
-            </select>
-          </div>
+      {currentView === 'products' ? (
+        <>
+          {/* Main Content */}
+          <div className="main-content">
+            <div className="container">
+              {/* Sorting */}
+              <div className="sorting">
+                <select 
+                  value={sortBy} 
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="default">Default sorting</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Rating</option>
+                </select>
+              </div>
 
-          {/* Products Grid */}
-          <div className="products-grid">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+              {/* Products Grid */}
+              <div className="products-grid">
+                {products.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
 
-          {/* Pagination */}
-          <div className="pagination">
-            <button disabled>‹</button>
-            <button className="active">1</button>
-            <button>2</button>
-            <button>›</button>
+              {/* Pagination */}
+              <div className="pagination">
+                <button disabled>‹</button>
+                <button className="active">1</button>
+                <button>2</button>
+                <button>›</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        <ProductDetails 
+          product={selectedProduct} 
+          onBack={handleBackToProducts}
+        />
+      )}
 
       {/* Footer */}
       <footer className="footer">

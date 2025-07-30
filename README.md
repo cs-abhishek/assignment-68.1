@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Amazon Style Product Listing
 
 This project recreates an Amazon-style product listing page using React.
@@ -72,3 +73,6 @@ src/
 8. **Responsive Design**: Mobile-friendly layout
 9. **Amazon-style Header**: Dark blue header with logo
 10. **Footer**: Simple footer with copyright information
+=======
+# assignment-54.1
+>>>>>>> 3acb7d1d6cd3a5f8e960e10690bf0e54d1529279
