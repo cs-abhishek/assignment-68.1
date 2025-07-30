@@ -11,6 +11,18 @@ const Layout = () => {
             <img src="/Amazon_logo.svg" alt="Amazon" onError={(e) => {e.target.style.display='none'; e.target.nextSibling.style.display='inline'}} />
             <span style={{display: 'none'}}>amazon</span>
           </Link>
+          <nav style={{ marginLeft: 'auto' }}>
+            <Link to="/cart" style={{ 
+              color: '#232f3e', 
+              textDecoration: 'none', 
+              fontWeight: '600',
+              padding: '10px 15px',
+              borderRadius: '4px',
+              transition: 'background-color 0.2s ease'
+            }}>
+              Cart
+            </Link>
+          </nav>
         </div>
       </header>
 
