@@ -6,6 +6,7 @@ const App = () => {
   const [sortBy, setSortBy] = useState('default');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentView, setCurrentView] = useState('products'); // 'products' or 'details'
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Product data based on the image
   const products = [
@@ -119,6 +120,27 @@ const App = () => {
     setSelectedProduct(null);
   };
 
+  // Filter products based on search term
+  const filteredProducts = products.filter(product =>
+    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Sort products based on selected sorting option
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortBy) {
+      case 'title':
+        return a.title.localeCompare(b.title);
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'default':
+      default:
+        return a.id - b.id; // Original order
+    }
+  });
+
   const ProductCard = ({ product }) => (
     <div className="product-card" onClick={() => handleProductClick(product)}>
       {product.onSale && <div className="sale-badge">Sale</div>}
@@ -126,6 +148,8 @@ const App = () => {
         src={product.image} 
         alt={product.title}
         className="product-image"
+        loading="lazy"
+        decoding="async"
       />
       <div className="product-info">
         <div className="product-category">{product.category}</div>
@@ -160,24 +184,41 @@ const App = () => {
           {/* Main Content */}
           <div className="main-content">
             <div className="container">
+              {/* Search Section */}
+              <div className="search-section">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+
               {/* Sorting */}
               <div className="sorting">
                 <select 
                   value={sortBy} 
                   onChange={(e) => setSortBy(e.target.value)}
                 >
-                  <option value="default">Default sorting</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Rating</option>
+                  <option value="default">Default Sort</option>
+                  <option value="title">Sort by title</option>
+                  <option value="price-low">Sort by price: low to high</option>
+                  <option value="price-high">Sort by price: high to low</option>
                 </select>
               </div>
 
               {/* Products Grid */}
               <div className="products-grid">
-                {products.map(product => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                {sortedProducts.length > 0 ? (
+                  sortedProducts.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))
+                ) : (
+                  <div className="no-products">
+                    <p>No products found matching your search.</p>
+                  </div>
+                )}
               </div>
 
               {/* Pagination */}
