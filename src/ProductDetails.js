@@ -1,29 +1,38 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { HiArrowNarrowLeft, HiArrowNarrowRight } from "react-icons/hi";
+import { useCart } from './CartContext';
 import './ProductDetails.css';
 
 const ProductDetails = ({ product, onBack }) => {
   const [quantity, setQuantity] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { addToCart } = useCart();
 
   if (!product) {
     return <div>Product not found</div>;
   }
 
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} of ${product.title} to cart`);
-    // Add to cart logic here
+    addToCart(product, quantity);
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 2000);
   };
 
   return (
     <div className="product-details">
       <div className="container">
-        <button className="back-button" onClick={onBack}>
-          ← Back to Products
-        </button>
+        <Link to="/" className="back-button-improved">
+          <HiArrowNarrowLeft className="back-icon" />
+          HOME
+        </Link>
         
         <div className="product-details-content">
           <div className="product-image-section">
             <img 
-              src={product.image} 
+              src={product.thumbnail || product.images?.[0]} 
               alt={product.title}
               className="product-details-image"
             />
@@ -34,20 +43,33 @@ const ProductDetails = ({ product, onBack }) => {
             
             <div className="product-details-price">
               <span className="current-price">${product.price.toFixed(2)}</span>
-              {product.originalPrice && (
-                <span className="original-price">${product.originalPrice.toFixed(2)}</span>
+              {product.discountPercentage > 0 && (
+                <span className="original-price">${(product.price / (1 - product.discountPercentage / 100)).toFixed(2)}</span>
               )}
             </div>
             
             <div className="product-description">
               <p>
-                Neque porro quisquam est, qui dolore ipsum quia dolor sit amet, 
-                consectetur adipisci velit, sed quia non incidunt lores ta porro ame. 
-                numquam eius modi tempora incidunt lores ta porro ame.
+                {product.description}
               </p>
             </div>
             
             <div className="product-actions">
+              {showSuccess && (
+                <div className="success-message" style={{
+                  color: '#4caf50',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '10px',
+                  padding: '8px 12px',
+                  backgroundColor: '#e8f5e8',
+                  borderRadius: '4px',
+                  border: '1px solid #4caf50'
+                }}>
+                  ✅ Added to cart successfully!
+                </div>
+              )}
+              
               <input
                 type="number"
                 id="quantity"
@@ -58,13 +80,34 @@ const ProductDetails = ({ product, onBack }) => {
                 className="quantity-input"
               />
               
-              <button 
-                className="add-to-cart-btn"
-                onClick={handleAddToCart}
-              >
-                ADD TO CART
-              </button>
+              {!showSuccess && (
+                <button 
+                  className="add-to-cart-btn"
+                  onClick={handleAddToCart}
+                >
+                  ADD TO CART
+                </button>
+              )}
             </div>
+          </div>
+        </div>
+        
+        {/* Navigation Buttons */}
+        <div className="navigation-buttons">
+          <div>
+            {product.id > 1 && (
+              <Link to={`/product/${product.id - 1}`} className="nav-button prev-button">
+                <HiArrowNarrowLeft className="nav-icon" />
+                Previous
+              </Link>
+            )}
+          </div>
+          
+          <div>
+            <Link to={`/product/${product.id + 1}`} className="nav-button next-button">
+              Next
+              <HiArrowNarrowRight className="nav-icon" />
+            </Link>
           </div>
         </div>
       </div>
